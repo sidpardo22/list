@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Sid's Wishlist</title>
+
+  <style>
+    @font-face{
+      font-family:'Coolvetica';
+      src:url('Coolvetica Rg.otf') format('opentype');
+      font-weight:400;
+      font-style:normal;
+      font-display:swap;
+    }
+
+    :root{
+      --bg:#07080a;
+      --text:#e8e8ea;
+      --card:#000;
+      --footer:#2a2a2a;
+      --border:#2a2a2a;
+      --thumb:#101010;
+      --radius:16px;
+      --cardH:388px;
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+      -webkit-touch-callout:none;
+    }
+
+    html,body{height:100%;background:var(--bg)}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:'Coolvetica',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      font-weight:400;
+      overflow-x:hidden;
+      background:transparent;
+      overscroll-behavior-y:none;
+      position:relative;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
+      user-select:text;
+      -webkit-user-select:text;
+      -ms-user-select:text;
+    }
+
+    #bg{
+      position:fixed;
+      left:0;
+      top:0;
+      width:calc(100vw + 640px);
+      height:calc(100vh + 640px);
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.55)),
+        url("bg.png") center center/auto 100% no-repeat;
+      background-color:var(--bg);
+      transform:translate3d(-320px,-320px,0);
+      will-change:transform;
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width:1100px;
+      margin:0 auto;
+      padding-top:28px;
+      padding-bottom:72px;
+      padding-left:calc(16px + env(safe-area-inset-left));
+      padding-right:calc(16px + env(safe-area-inset-right));
+    }
+
+    .banner{padding:36px 2px 40px}
+    .title-img{
+      display:block;
+      margin:0 auto;
+      width:min(720px,90vw);
+      height:auto;
+      opacity:.95;
+      user-select:none;
+      -webkit-user-select:none;
+      -ms-user-select:none;
+      -webkit-user-drag:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    .selectable{user-select:text;-webkit-user-select:text;-ms-user-select:text;cursor:text}
+
+    .grid{
+      display:grid;
+      gap:16px;
+      margin-top:10px;
+      grid-template-columns:repeat(3,1fr);
+      grid-auto-rows:var(--cardH);
+    }
+    @media (max-width:960px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:560px){.grid{grid-template-columns:1fr}}
+
+    .product{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:var(--card);
+      overflow:hidden;
+      transition:transform .12s ease, box-shadow .18s ease, border-color .2s ease;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -1px 0 rgba(0,0,0,.35);
+    }
+    .product:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,255,255,.22);
+      box-shadow:0 18px 60px rgba(0,0,0,.55);
+    }
+
+    .product.purchased{transition:none}
+    .product.purchased:hover{
+      transform:none;
+      border-color:var(--border);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -1px 0 rgba(0,0,0,.35);
+    }
+
+    .imgbtn{
+      border:0;
+      background:transparent;
+      padding:0;
+      margin:0;
+      cursor:pointer;
+      width:100%;
+      text-align:inherit;
+      font:inherit;
+      color:inherit;
+    }
+    a{font:inherit;color:inherit}
+
+    .thumb{
+      height:300px;
+      background:var(--thumb);
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .thumbImg{
+      position:absolute;
+      inset:14px;
+      background-position:center;
+      background-repeat:no-repeat;
+      background-size:contain;
+    }
+
+    .under{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      align-items:start;
+      gap:12px;
+      background:var(--footer);
+      padding:12px 14px 14px;
+      min-height:86px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+      position:relative;
+    }
+    .textblock{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .name{
+      font-size:15px;
+      font-weight:400;
+      line-height:1.25;
+      letter-spacing:.1px;
+      color:#fff;
+      white-space:normal;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+    .price{
+      font-size:13px;
+      font-weight:400;
+      line-height:1.2;
+      letter-spacing:.1px;
+      color:rgba(232,232,234,.76);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .seller{
+      font-size:12px;
+      font-weight:400;
+      line-height:1.2;
+      letter-spacing:.15px;
+      color:rgba(232,232,234,.60);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .outlink{
+      font-size:12px;
+      font-weight:400;
+      letter-spacing:1.1px;
+      text-transform:uppercase;
+      color:rgba(232,232,234,.92);
+      text-decoration:none;
+      padding:9px 11px;
+      border-radius:999px;
+      border:1px solid rgba(232,232,234,.22);
+      background:#000;
+      white-space:nowrap;
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      user-select:none;
+      -webkit-user-select:none;
+      -ms-user-select:none;
+      -webkit-user-drag:none;
+    }
+    .outlink:hover{border-color:rgba(232,232,234,.32);filter:brightness(1.08)}
+
+    .product.purchased .imgbtn{cursor:pointer}
+    .product.purchased .thumbImg{filter:grayscale(1) contrast(1.15) brightness(.10)}
+    .product.purchased .thumb::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.62);
+      pointer-events:none;
+    }
+    .product.purchased .thumb::after{
+      content:"Purchased";
+      position:absolute;
+      top:12px;
+      right:12px;
+      padding:9px 14px;
+      border-radius:999px;
+      border:1px solid rgba(232,232,234,.20);
+      background:rgba(0,0,0,.55);
+      color:rgba(232,232,234,.92);
+      font-size:15px;
+      letter-spacing:.9px;
+      text-transform:uppercase;
+      line-height:1;
+      pointer-events:none;
+      backdrop-filter:blur(6px);
+      font-weight:400;
+    }
+
+    .lightbox{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(0,0,0,.38);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      z-index:120;
+    }
+    .lightbox.open{display:flex}
+    .lb-stage{
+      position:relative;
+      width:min(96vw,1100px);
+      height:min(92vh,900px);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+    }
+    .lb-img{
+      width:100%;
+      flex:1 1 auto;
+      border-radius:14px;
+      background-position:center;
+      background-repeat:no-repeat;
+      background-size:contain;
+    }
+    .lb-controls{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      padding-bottom:4px;
+    }
+    .lb-nav{
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.35);
+      color:rgba(255,255,255,.92);
+      padding:10px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      font:inherit;
+      font-weight:400;
+    }
+    .lb-nav:disabled{opacity:.45;cursor:default}
+    .lb-count{
+      font-size:12px;
+      letter-spacing:.4px;
+      color:rgba(255,255,255,.85);
+      min-width:64px;
+      text-align:center;
+      user-select:none;
+      font-weight:400;
+    }
+    .lb-controls.hidden{display:none}
+
+    :focus-visible{
+      outline:2px solid rgba(255,255,255,.65);
+      outline-offset:3px;
+    }
+    .imgbtn:focus-visible, .outlink:focus-visible, .lb-nav:focus-visible{
+      border-radius:14px;
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{ transition:none !important; animation:none !important; }
+    }
+
+</style>
+</head>
+
+<body>
+  <div id="bg" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <header class="banner">
+      <img class="title-img" src="Title.png" alt="Sid's Wishlist" draggable="false">
+    </header>
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lb-stage" role="dialog" aria-modal="true" aria-label="Image preview">
+      <div class="lb-img" id="lbImg" aria-label="Preview image"></div>
+      <div class="lb-controls" id="lbControls">
+        <button class="lb-nav" id="lbPrev" type="button">Prev</button>
+        <div class="lb-count" id="lbCount">1 / 1</div>
+        <button class="lb-nav" id="lbNext" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('contextmenu', (e) => {
+      const t = e.target;
+      // Allow right-click menu only on selectable text (and form fields).
+      if (t && t.closest && t.closest('.selectable')) return;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      e.preventDefault();
+    });
+    document.addEventListener('keydown', (e) => {
+      const k = e.key.toLowerCase();
+      if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'p')) e.preventDefault();
+    });
+    document.addEventListener('dragstart', (e) => e.preventDefault());
+
+    (function(){
+      const bg = document.getElementById('bg');
+      if(!bg) return;
+
+      const OVERSCAN = 320;
+
+      function apply(){
+        const vw = window.visualViewport;
+        const sw = vw ? vw.width : ((window.screen && screen.width) ? screen.width : window.innerWidth);
+        const sh = vw ? vw.height : ((window.screen && screen.height) ? screen.height : window.innerHeight);
+        bg.style.width = (sw + OVERSCAN * 2) + 'px';
+        bg.style.height = (sh + OVERSCAN * 2) + 'px';
+        bg.style.transform = `translate3d(${-OVERSCAN}px, ${-OVERSCAN}px, 0)`;
+      }
+
+      apply();
+      window.addEventListener('orientationchange', () => {
+        apply();
+        requestAnimationFrame(apply);
+        setTimeout(apply, 30);
+        setTimeout(apply, 120);
+      }, {passive:true});
+    })();
+
+    const catalog = [
+      {id:'pentagram',name:'Luciferian Cross Snapback',featured:1,imgs:['Luciferian Hat 01.png','Luciferian Hat 02.png','Luciferian Hat 03.png','Luciferian Hat 04.png','Luciferian Hat 05.png','Luciferian Hat 06.png','Luciferian Hat 07.png','Luciferian Hat 08.png'],url:'https://inkpoisoningapparel.com/collections/hats/products/luciferian-cross',soldBy:'Ink Poisoning Apparel',price:'$32.99',purchased:false},
+      {id:'bathory',name:'Bathory - Goat',featured:2,imgs:['Bathory Front.png','Bathory Back.png'],url:'https://indiemerchstore.com/products/bathory-goat-t-shirt',soldBy:'Indie Merch Store',price:'$24.99',purchased:true},
+      {id:'venom',name:'Venom - Welcome To Hell',featured:3,imgs:['Venom Front.png','Venom Back.png'],url:'https://rebellionrepublic.com/products/venom-welcome-to-hell-tee',soldBy:'Rebellion Republic',price:'$30.00',purchased:true},
+      {id:'mayhem',name:'Mayhem - Deathcrush',featured:4,img:'Mayhem.png',url:'https://thetruemayhem.store/products/mayhem-deathcrush-tee-black',soldBy:'Mayhem',price:'$29.99',purchased:true},
+      {id:'dissection',name:'Dissection - The Somberlain',featured:5,img:'Dissection.png',url:'https://nightshiftmerch.com/collections/dissection/products/dissection-somberlain-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true},
+      {id:'emperor',name:'Emperor - In The Nightside Eclipse',featured:6,imgs:['Emperor Front.png','Emperor Back.png'],url:'https://rebellionrepublic.com/products/emperor-nightside-eclipse-tee',soldBy:'Rebellion Republic',price:'$28.00',purchased:true},
+      {id:'darkthrone',name:'Darkthrone - Transilvanian Hunger',featured:7,imgs:['Darkthrone Front.png','Darkthrone Back.png',],url:'https://nightshiftmerch.com/collections/darkthrone/products/darkthrone-transilvanian-hunger-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true},
+      {id:'immortal',name:'Immortal - At The Heart Of Winter',featured:8,imgs:['Immortal Front.png','Immortal Back.png'],url:'https://nightshiftmerch.com/collections/immortal/products/immortal-at-the-heart-of-winter-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true}
+    ];
+
+    const $ = (s) => document.querySelector(s);
+    const grid = $('#grid');
+    const lb = $('#lightbox');
+    const lbImg = $('#lbImg');
+    const prev = $('#lbPrev');
+    const next = $('#lbNext');
+    const count = $('#lbCount');
+    const controls = $('#lbControls');
+    let lastFocus = null;
+    const byId = new Map(catalog.map(p => [p.id, p]));
+
+    const placeholder = (t) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
+        <rect width="100%" height="100%" fill="#101010"/>
+        <text x="50%" y="80%" fill="#c7c7d1" font-family="system-ui" font-weight="400"
+              font-size="26" letter-spacing="3" text-anchor="middle">${(t||'IMAGE').toUpperCase()}</text>
+      </svg>`
+    );
+
+    let imgs = [];
+    let i = 0;
+
+    function safeUrl(src){
+      if (!src) return '';
+      if (src.startsWith('data:')) return src;
+      return encodeURI(src);
+    }
+
+    function renderLb(){
+      const n = imgs.length || 1;
+      const src = imgs[i] || '';
+      lbImg.style.backgroundImage = src ? `url("${safeUrl(src)}")` : 'none';
+      count.textContent = `${Math.min(i+1, n)} / ${n}`;
+      const multi = n > 1;
+      prev.disabled = !multi;
+      next.disabled = !multi;
+      controls.classList.toggle('hidden', !multi);
+    }
+
+    function openLb(p){
+      imgs = (Array.isArray(p.imgs) && p.imgs.length) ? p.imgs : (p.img ? [p.img] : []);
+      i = 0;
+      lastFocus = document.activeElement;
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      renderLb();
+    }
+
+    function closeLb(){
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus({preventScroll:true});
+      lastFocus = null;
+    }
+
+    prev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (imgs.length > 1){ i = (i - 1 + imgs.length) % imgs.length; renderLb(); }
+    });
+
+    next.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (imgs.length > 1){ i = (i + 1) % imgs.length; renderLb(); }
+    });
+
+    lb.addEventListener('click', () => { closeLb(); });
+
+    window.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLb();
+      if (e.key === 'ArrowLeft') prev.click();
+      if (e.key === 'ArrowRight') next.click();
+    });
+
+    function renderGrid(){
+      const ordered = catalog.slice().sort((a,b)=>a.featured-b.featured);
+
+      grid.innerHTML = ordered.map(p => {
+        const purchased = !!p.purchased;
+        const pics = (Array.isArray(p.imgs) && p.imgs.length) ? p.imgs : (p.img ? [p.img] : []);
+        const src = pics[0] || placeholder(p.name);
+        const price = p.price ? `<div class="price selectable">${p.price}</div>` : '';
+        const url = p.url || '#';
+        const rel = p.url ? 'target="_blank" rel="noopener"' : '';
+
+        return `
+          <div class="product${purchased ? ' purchased' : ''}" data-pid="${p.id}">
+            <button class="imgbtn" type="button" aria-label="Open larger view">
+              <div class="thumb" data-src="${src}">
+                <div class="thumbImg"></div>
+              </div>
+            </button>
+            <div class="under">
+              <div class="textblock">
+                <div class="name selectable" title="${p.name}">${p.name}</div>
+                ${price}
+                <div class="seller selectable">Sold by ${p.soldBy || ''}</div>
+              </div>
+              <a class="outlink" href="${url}" ${rel} draggable="false">Shop ↗</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      grid.querySelectorAll('.product').forEach(card => {
+        const p = byId.get(card.dataset.pid);
+        const src = card.querySelector('.thumb').getAttribute('data-src');
+        card.querySelector('.thumbImg').style.backgroundImage = `url("${safeUrl(src)}")`;
+
+        card.querySelector('.imgbtn').addEventListener('click', () => {
+          // Purchased items should still allow image viewing.
+          openLb(p);
+        });
+      });
+    }
+
+    renderGrid();
+  </script>
+</body>
+</html>
