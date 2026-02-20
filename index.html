@@ -260,15 +260,6 @@
     @media (hover:hover){
       .product.purchased:hover .thumbImg{filter:none}
       .product.purchased:hover .thumb::before{background:rgba(0,0,0,.25)}
-    /* Mobile (no hover): reveal color while tapping/pressing */
-    @media (hover:none){
-      .product.purchased:active .thumbImg{filter:none}
-      .product.purchased:active .thumb::before{background:rgba(0,0,0,.25)}
-    }
-    /* JS-assisted touch highlight */
-    .product.purchased.touching .thumbImg{filter:none}
-    .product.purchased.touching .thumb::before{background:rgba(0,0,0,.25)}
-
     }
 
 
@@ -537,47 +528,6 @@
     }
 
     renderGrid();
-  
-    // Mobile support: temporarily reveal purchased item color on touch
-    (function(){
-      const noHover = window.matchMedia && window.matchMedia('(hover: none)').matches;
-      if(!noHover) return;
-
-      const add = (card) => card && card.classList.add('touching');
-      const remove = (card) => card && setTimeout(() => card.classList.remove('touching'), 140);
-
-      // Pointer Events (modern mobile browsers)
-      document.addEventListener('pointerdown', (e) => {
-        if (e.pointerType !== 'touch') return;
-        const card = e.target && e.target.closest ? e.target.closest('.product.purchased') : null;
-        add(card);
-      }, {passive:true});
-      document.addEventListener('pointerup', (e) => {
-        if (e.pointerType !== 'touch') return;
-        const card = e.target && e.target.closest ? e.target.closest('.product.purchased') : null;
-        remove(card);
-      }, {passive:true});
-      document.addEventListener('pointercancel', (e) => {
-        if (e.pointerType !== 'touch') return;
-        const card = e.target && e.target.closest ? e.target.closest('.product.purchased') : null;
-        remove(card);
-      }, {passive:true});
-
-      // Touch Events fallback
-      document.addEventListener('touchstart', (e) => {
-        const card = e.target && e.target.closest ? e.target.closest('.product.purchased') : null;
-        add(card);
-      }, {passive:true});
-      document.addEventListener('touchend', (e) => {
-        const card = e.target && e.target.closest ? e.target.closest('.product.purchased') : null;
-        remove(card);
-      }, {passive:true});
-      document.addEventListener('touchcancel', (e) => {
-        const card = e.target && e.target.closest ? e.target.closest('.product.purchased') : null;
-        remove(card);
-      }, {passive:true});
-    })();
-
-</script>
+  </script>
 </body>
 </html>
