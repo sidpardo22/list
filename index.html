@@ -253,7 +253,6 @@
       backdrop-filter:blur(6px);
       font-weight:400;
     }
-    /* Purchased items: reveal color on hover */
     .product.purchased .thumbImg{
       transition:filter .18s ease, transform .18s ease;
     }
@@ -262,6 +261,40 @@
       .product.purchased:hover .thumb::before{background:rgba(0,0,0,.25)}
     }
 
+    .product.soldout .imgbtn{cursor:pointer}
+    .product.soldout .thumbImg{filter:grayscale(1) contrast(1.15) brightness(.10)}
+    .product.soldout .thumb::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.62);
+      pointer-events:none;
+    }
+    .product.soldout .thumb::after{
+      content:"Sold Out";
+      position:absolute;
+      top:12px;
+      right:12px;
+      padding:9px 14px;
+      border-radius:999px;
+      border:1px solid rgba(232,232,234,.20);
+      background:rgba(0,0,0,.55);
+      color:rgba(232,232,234,.92);
+      font-size:15px;
+      letter-spacing:.9px;
+      text-transform:uppercase;
+      line-height:1;
+      pointer-events:none;
+      backdrop-filter:blur(6px);
+      font-weight:400;
+    }
+    .product.soldout .thumbImg{
+      transition:filter .18s ease, transform .18s ease;
+    }
+    @media (hover:hover){
+      .product.soldout:hover .thumbImg{filter:none}
+      .product.soldout:hover .thumb::before{background:rgba(0,0,0,.25)}
+    }
 
     .lightbox{
       position:fixed;
@@ -331,7 +364,6 @@
       border-radius:14px;
     }
 
-    /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce){
       *{ transition:none !important; animation:none !important; }
     }
@@ -363,7 +395,6 @@
   <script>
     document.addEventListener('contextmenu', (e) => {
       const t = e.target;
-      // Allow right-click menu only on selectable text (and form fields).
       if (t && t.closest && t.closest('.selectable')) return;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       e.preventDefault();
@@ -399,14 +430,14 @@
     })();
 
     const catalog = [
-      {id:'pentagram',name:'Luciferian Cross Snapback',featured:1,imgs:['Luciferian Hat 01.png','Luciferian Hat 02.png','Luciferian Hat 03.png','Luciferian Hat 04.png','Luciferian Hat 05.png','Luciferian Hat 06.png','Luciferian Hat 07.png','Luciferian Hat 08.png'],url:'https://inkpoisoningapparel.com/collections/hats/products/luciferian-cross',soldBy:'Ink Poisoning Apparel',price:'$32.99',purchased:false},
-      {id:'bathory',name:'Bathory - Goat',featured:2,imgs:['Bathory Front.png','Bathory Back.png'],url:'https://indiemerchstore.com/products/bathory-goat-t-shirt',soldBy:'Indie Merch Store',price:'$24.99',purchased:true},
-      {id:'venom',name:'Venom - Welcome To Hell',featured:3,imgs:['Venom Front.png','Venom Back.png'],url:'https://rebellionrepublic.com/products/venom-welcome-to-hell-tee',soldBy:'Rebellion Republic',price:'$30.00',purchased:true},
-      {id:'mayhem',name:'Mayhem - Deathcrush',featured:4,img:'Mayhem.png',url:'https://thetruemayhem.store/products/mayhem-deathcrush-tee-black',soldBy:'Mayhem',price:'$29.99',purchased:true},
-      {id:'dissection',name:'Dissection - The Somberlain',featured:5,img:'Dissection.png',url:'https://nightshiftmerch.com/collections/dissection/products/dissection-somberlain-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true},
-      {id:'emperor',name:'Emperor - In The Nightside Eclipse',featured:6,imgs:['Emperor Front.png','Emperor Back.png'],url:'https://rebellionrepublic.com/products/emperor-nightside-eclipse-tee',soldBy:'Rebellion Republic',price:'$28.00',purchased:true},
-      {id:'darkthrone',name:'Darkthrone - Transilvanian Hunger',featured:7,imgs:['Darkthrone Front.png','Darkthrone Back.png',],url:'https://nightshiftmerch.com/collections/darkthrone/products/darkthrone-transilvanian-hunger-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true},
-      {id:'immortal',name:'Immortal - At The Heart Of Winter',featured:8,imgs:['Immortal Front.png','Immortal Back.png'],url:'https://nightshiftmerch.com/collections/immortal/products/immortal-at-the-heart-of-winter-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true}
+      {id:'pentagram',name:'Luciferian Cross Snapback',featured:1,imgs:['Luciferian Hat 01.png','Luciferian Hat 02.png','Luciferian Hat 03.png','Luciferian Hat 04.png','Luciferian Hat 05.png','Luciferian Hat 06.png','Luciferian Hat 07.png','Luciferian Hat 08.png'],url:'https://inkpoisoningapparel.com/collections/hats/products/luciferian-cross',soldBy:'Ink Poisoning Apparel',price:'$32.99',purchased:false,soldOut:true},
+      {id:'bathory',name:'Bathory - Goat',featured:2,imgs:['Bathory Front.png','Bathory Back.png'],url:'https://indiemerchstore.com/products/bathory-goat-t-shirt',soldBy:'Indie Merch Store',price:'$24.99',purchased:true,soldOut:false},
+      {id:'venom',name:'Venom - Welcome To Hell',featured:3,imgs:['Venom Front.png','Venom Back.png'],url:'https://rebellionrepublic.com/products/venom-welcome-to-hell-tee',soldBy:'Rebellion Republic',price:'$30.00',purchased:true,soldOut:false},
+      {id:'mayhem',name:'Mayhem - Deathcrush',featured:4,img:'Mayhem.png',url:'https://thetruemayhem.store/products/mayhem-deathcrush-tee-black',soldBy:'Mayhem',price:'$29.99',purchased:true,soldOut:false},
+      {id:'dissection',name:'Dissection - The Somberlain',featured:5,img:'Dissection.png',url:'https://nightshiftmerch.com/collections/dissection/products/dissection-somberlain-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true,soldOut:false},
+      {id:'emperor',name:'Emperor - In The Nightside Eclipse',featured:6,imgs:['Emperor Front.png','Emperor Back.png'],url:'https://rebellionrepublic.com/products/emperor-nightside-eclipse-tee',soldBy:'Rebellion Republic',price:'$28.00',purchased:true,soldOut:false},
+      {id:'darkthrone',name:'Darkthrone - Transilvanian Hunger',featured:7,imgs:['Darkthrone Front.png','Darkthrone Back.png'],url:'https://nightshiftmerch.com/collections/darkthrone/products/darkthrone-transilvanian-hunger-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true,soldOut:false},
+      {id:'immortal',name:'Immortal - At The Heart Of Winter',featured:8,imgs:['Immortal Front.png','Immortal Back.png'],url:'https://nightshiftmerch.com/collections/immortal/products/immortal-at-the-heart-of-winter-t-shirt',soldBy:'Night Shift Merch',price:'$24.99',purchased:true,soldOut:false}
     ];
 
     const $ = (s) => document.querySelector(s);
@@ -490,6 +521,7 @@
 
       grid.innerHTML = ordered.map(p => {
         const purchased = !!p.purchased;
+        const soldOut = !!p.soldOut;
         const pics = (Array.isArray(p.imgs) && p.imgs.length) ? p.imgs : (p.img ? [p.img] : []);
         const src = pics[0] || placeholder(p.name);
         const price = p.price ? `<div class="price selectable">${p.price}</div>` : '';
@@ -497,7 +529,7 @@
         const rel = p.url ? 'target="_blank" rel="noopener"' : '';
 
         return `
-          <div class="product${purchased ? ' purchased' : ''}" data-pid="${p.id}">
+          <div class="product${purchased ? ' purchased' : ''}${soldOut ? ' soldout' : ''}" data-pid="${p.id}">
             <button class="imgbtn" type="button" aria-label="Open larger view">
               <div class="thumb" data-src="${src}">
                 <div class="thumbImg"></div>
@@ -521,7 +553,6 @@
         card.querySelector('.thumbImg').style.backgroundImage = `url("${safeUrl(src)}")`;
 
         card.querySelector('.imgbtn').addEventListener('click', () => {
-          // Purchased items should still allow image viewing.
           openLb(p);
         });
       });
